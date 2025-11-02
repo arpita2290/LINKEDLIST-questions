@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int search(struct Node* head, int value) {
+    int position = 1;
+    struct Node* temp = head;
+    while (temp != NULL) {
+        if (temp->data == value)
+            return position;
+        temp = temp->next;
+        position++;
+    }
+    return -1;
+}
+
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+}
+
+int main() {
+    struct Node* head = NULL;
+    insertAtEnd(&head, 10);
+    insertAtEnd(&head, 20);
+    insertAtEnd(&head, 30);
+
+    int val = 20;
+    int pos = search(head, val);
+    if (pos != -1)
+        printf("%d found at position %d\n", val, pos);
+    else
+        printf("%d not found\n", val);
+
+    val = 40;
+    pos = search(head, val);
+    if (pos != -1)
+        printf("%d found at position %d\n", val, pos);
+    else
+        printf("%d not found\n", val);
+
+    while (head != NULL) {
+        struct Node* tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+    return 0;
+}
