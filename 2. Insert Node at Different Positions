@@ -1,46 +1,74 @@
-class Node {
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
     int data;
-    Node next;
-    
-    Node(int data) {
-        this.data = data;
-        this.next = null;
-    }
+    struct Node* next;
+};
+
+void insertAtBeginning(struct Node** head, int data) {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = *head;
+    *head = newNode;
 }
 
-class LinkedList {
-    Node head;
-    
-    public void insertAtBeginning(int data) {
-        Node newNode = new Node(data);
-        newNode.next = head;
-        head = newNode;
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        *head = newNode;
+        return;
     }
-    
-    public void insertAtEnd(int data) {
-        Node newNode = new Node(data);
-        
-        if (head == null) {
-            head = newNode;
-            return;
-        }
-        
-        Node current = head;
-        while (current.next != null) {
-            current = current.next;
-        }
-        current.next = newNode;
+    struct Node* temp = *head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+}
+
+void insertAtPosition(struct Node** head, int data, int position) {
+    if (position == 1) {
+        insertAtBeginning(head, data);
+        return;
     }
-    
-    public void insertAtPosition(int data, int position) {
-        if (position < 1) {
-            System.out.println("Invalid position");
-            return;
-        }
-        
-        Node newNode = new Node(data);
-        
-        if (position == 1) {
-            newNode.next = head;
-            head = newNode;
-           
+    struct Node* newNode = malloc(sizeof(struct Node));
+    newNode->data = data;
+    struct Node* temp = *head;
+    for (int i = 1; i < position - 1 && temp != NULL; i++)
+        temp = temp->next;
+    if (temp == NULL) {
+        free(newNode);
+        return;
+    }
+    newNode->next = temp->next;
+    temp->next = newNode;
+}
+
+void display(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    insertAtEnd(&head, 20);
+    insertAtEnd(&head, 30);
+    insertAtEnd(&head, 40);
+    insertAtBeginning(&head, 10);
+    insertAtPosition(&head, 25, 3);
+    display(head);
+
+    // Free
+    while (head != NULL) {
+        struct Node* tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+
+    return 0;
+}
