@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 100
+
+char stack[MAX];
+int top = -1;
+
+void push(char c) {
+    stack[++top] = c;
+}
+
+char pop() {
+    if (top == -1) return -1;
+    return stack[top--];
+}
+
+int precedence(char c) {
+    if (c == '+' || c == '-') return 1;
+    if (c == '*' || c == '/') return 2;
+    return 0;
+}
+
+void infixToPostfix(char* infix, char* postfix) {
+    int i=0, k=0;
+    char c;
+    while ((c = infix[i++]) != '\0') {
+        if (isalnum(c)) postfix[k++] = c;
+        else if (c == '(') push(c);
+        else if (c == ')') {
+            while (top != -1 && stack[top] != '(')
+                postfix[k++] = pop();
+            pop();
+        } else {
+            while (top != -1 && precedence(stack[top]) >= precedence(c))
+                postfix[k++] = pop();
+            push(c);
+        }
+    }
+    while (top != -1)
+        postfix[k++] = pop();
+    postfix[k] = '\0';
+}
+
+void reverse(char* str) {
+    int len = strlen(str);
+    for (int i=0; i<len/2; i++) {
+        char t = str[i];
+        str[i] = str[len-i-1];
+        str[len-i-1] = t;
+    }
+}
+
+void swapParenthesis(char* str) {
+    for (int i=0; str[i]; i++) {
+        if (str[i] == '(') str[i] = ')';
+        else if (str[i] == ')') str[i] = '(';
+    }
+}
+
+void infixToPrefix(char* infix, char* prefix) {
+    char rev[100];
+    strcpy(rev, infix);
+    reverse(rev);
+    swapParenthesis(rev);
+    top = -1;
+    infixToPostfix(rev, prefix);
+    reverse(prefix);
+}
+
+int main() {
+    char infix[] = "(a+b)*c";
+    char postfix[100], prefix[100];
+    top = -1;
+    infixToPostfix(infix, postfix);
+    top = -1;
+    infixToPrefix(infix, prefix);
+    printf("Infix: %s\n", infix);
+    printf("Postfix: %s\n", postfix);
+    printf("Prefix: %s\n", prefix);
+    return 0;
+}
