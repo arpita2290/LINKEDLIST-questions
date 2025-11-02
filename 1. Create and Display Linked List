@@ -1,38 +1,36 @@
-class Node {
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
     int data;
-    Node next;
-    
-    Node(int data) {
-        this.data = data;
-        this.next = null;
+    struct Node* next;
+};
+
+void display(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
     }
+    printf("NULL\n");
 }
 
-class LinkedList {
-    Node head;
-    
-    public void display() {
-        if (head == null) {
-            System.out.println("List is empty");
-            return;
-        }
-        
-        Node current = head;
-        while (current != null) {
-            System.out.print(current.data + " -> ");
-            current = current.next;
-        }
-        System.out.println("null");
+int main() {
+    struct Node* head = malloc(sizeof(struct Node));
+    head->data = 10;
+    head->next = malloc(sizeof(struct Node));
+    head->next->data = 20;
+    head->next->next = malloc(sizeof(struct Node));
+    head->next->next->data = 30;
+    head->next->next->next = NULL;
+
+    display(head);
+
+    // Free
+    while (head != NULL) {
+        struct Node* tmp = head;
+        head = head->next;
+        free(tmp);
     }
-    
-    public static void main(String[] args) {
-        LinkedList list = new LinkedList();
-        list.head = new Node(10);
-        list.head.next = new Node(20);
-        list.head.next.next = new Node(30);
-        list.head.next.next.next = new Node(40);
-        
-        System.out.println("Linked List:");
-        list.display();
-    }
+    return 0;
 }
